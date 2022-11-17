@@ -1,0 +1,542 @@
+create table Periodista(
+	id_periodista int not null,
+	id_sucursal int not null,
+	periodista_nombre text not null,
+	periodista_apellidos text not null,
+	constraint PK_Periodista primary key (id_periodista)
+);
+create table Publicacion(
+	id_publicacion int not null,
+	id_articulo int not null,
+	id_seccion int not null,
+	fecha_publicacion date not null,
+	constraint PK_Publicacion primary key(id_publicacion)
+);
+create table Seccion(
+	id_seccion int not null,
+	seccion_nombre text not null,
+	posicion text not null,
+	cantidad_paginas int not null,
+	publicaciones_max int not null,
+	constraint PK_Seccion primary key (id_seccion)
+);
+create table Articulo(
+	id_articulo int not null,
+	id_relevancia int not null,
+	id_polemica int not null,
+	id_tipo_articulo int not null,
+	id_periodista int not null,
+	id_estado int not null,
+	titulo text not null,
+	constraint PK_Articulo primary key (id_articulo)
+);
+create table Estado(
+	id_estado int not null,
+	estado_nombre text not null,
+	constraint PK_Estado primary key (id_estado)
+);
+create table Relevancia_Articulo(
+	id_relevancia int not null,
+	relevancia_nombre text not null,
+	constraint PK_Relevancia_Articulo primary key (id_relevancia)
+);
+create table Polemica_Articulo(
+	id_polemica int not null,
+	polemica_nombre text not null,
+	constraint PK_Polemica_Articulo primary key (id_polemica)
+);
+create table Tipo_Articulo(
+	id_tipo_articulo int not null,
+	tipo_articulo_nombre text not null,
+	constraint PK_Tipo_Articulo primary key (id_tipo_articulo)
+);
+create table Revision(
+	id_revision int not null,
+	id_editor int not null,
+	id_articulo int not null,
+	motivo text not null,
+	constraint PK_Revision primary key (id_revision)
+);
+create table Editor(
+	id_editor int not null,
+	id_sucursal int not null,
+	editor_nombre text not null,
+	editor_apellidos text not null,
+	constraint PK_Editor primary key (id_editor)
+);
+create table Demandas(
+	id_demandas int not null,
+	id_sucursal int not null,
+	fecha_demanda date not null,
+	descripcion text not null,
+	constraint PK_Demandas primary key (id_demandas)
+);
+create table Sucursal(
+	id_sucursal int not null,
+	id_ubicacion int not null,
+	sucursal_nombre text not null,
+	constraint PK_Sucursal primary key (id_sucursal)
+);
+create table Ubicacion_Sucursal(
+	id_ubicacion int not null,
+	id_ciudad int not null,
+	calle text not null,
+	avenida text not null,
+	referencia text null,
+	constraint PK_Ubicacion_Sucursal primary key (id_ubicacion)
+);
+create table Region(
+	id_region int not null,
+	region_nombre text not null,
+	constraint PK_Region primary key (id_region)
+);
+create table Provincia(
+	id_provincia int not null,
+	id_region int not null,
+	provincia_nombre text not null,
+	constraint PK_Provincia primary key (id_provincia)
+);
+create table Ciudad(
+	id_ciudad int not null,
+	id_provincia int not null,
+	ciudad_nombre text not null,
+	constraint PK_Ciudad primary key (id_ciudad)
+);
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+alter table Provincia
+add constraint FK_Provincia_Region foreign key (id_region)
+references Region (id_region)
+on delete restrict  on update restrict;
+
+alter table Ciudad
+add constraint FK_Ciudad_Provincia foreign key (id_provincia)
+references Provincia (id_provincia)
+on delete restrict  on update restrict;
+
+alter table Ubicacion_Sucursal
+add constraint FK_Ubicacion_Sucursal_Ciudad foreign key (id_ciudad)
+references Ciudad (id_ciudad)
+on delete restrict  on update restrict;
+
+alter table Sucursal
+add constraint FK_Sucursal_Ubicacion_Sucursal foreign key (id_ubicacion)
+references Ubicacion_Sucursal (id_ubicacion)
+on delete restrict  on update restrict;
+
+alter table Demandas
+add constraint FK_Demandas_Sucursal foreign key (id_sucursal)
+references Sucursal (id_sucursal)
+on delete restrict  on update restrict;
+
+alter table Editor
+add constraint FK_Editor_Sucursal foreign key (id_sucursal)
+references Sucursal (id_sucursal)
+on delete restrict  on update restrict;
+
+alter table Periodista
+add constraint FK_Periodista_Sucursal foreign key (id_sucursal)
+references Sucursal (id_sucursal)
+on delete restrict  on update restrict;
+
+alter table Publicacion
+add constraint FK_Publicacion_Articulo foreign key (id_articulo)
+references Articulo (id_articulo)
+on delete restrict  on update restrict;
+
+alter table Publicacion
+add constraint FK_Publicacion_Seccion foreign key (id_seccion)
+references Seccion (id_seccion)
+on delete restrict  on update restrict;
+
+alter table Articulo
+add constraint FK_Articulo_Estado foreign key (id_estado)
+references Estado (id_estado)
+on delete restrict  on update restrict;
+
+alter table Articulo
+add constraint FK_Articulo_Relevancia foreign key (id_relevancia)
+references Relevancia_Articulo (id_relevancia)
+on delete restrict  on update restrict;
+
+alter table Articulo
+add constraint FK_Articulo_Polemica foreign key (id_polemica)
+references Polemica_Articulo (id_polemica)
+on delete restrict  on update restrict;
+
+alter table Articulo
+add constraint FK_Articulo_Tipo foreign key (id_tipo_articulo)
+references Tipo_Articulo (id_tipo_articulo)
+on delete restrict  on update restrict;
+
+alter table Articulo
+add constraint FK_Articulo_Periodista foreign key (id_periodista)
+references Periodista (id_periodista)
+on delete restrict  on update restrict;
+
+alter table Revision
+add constraint FK_Revision_Articulo foreign key (id_articulo)
+references Articulo (id_articulo)
+on delete restrict  on update restrict;
+
+alter table Revision
+add constraint FK_Revision_Editor foreign key (id_editor)
+references Editor (id_editor)
+on delete restrict  on update restrict;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Datos de la tabla region
+insert into Region values(1,'Litoral');
+insert into Region values(2,'Sierra');
+insert into Region values(3,'Oriente');
+insert into Region values(4,'Insular');
+
+-- Datos de la tabla provincia
+insert into Provincia values(1,1,'Esmeraldas');
+insert into Provincia values(2,1,'Manabí');
+insert into Provincia values(3,1,'Los Ríos');
+insert into Provincia values(4,1,'Santa Elena');
+insert into Provincia values(5,1,'Guayas');
+insert into Provincia values(6,1,'El Oro');
+insert into Provincia values(7,1,'Santo Domingo de los Tsáchilas');
+insert into Provincia values(8,2,'Azuay');
+insert into Provincia values(9,2,'Bolívar');
+insert into Provincia values(10,2,'Cañar');
+insert into Provincia values(11,2,'Carchi');
+insert into Provincia values(12,2,'Chimborazo');
+insert into Provincia values(13,2,'Cotopaxi');
+insert into Provincia values(14,2,'Imbabura');
+insert into Provincia values(15,2,'Loja');
+insert into Provincia values(16,2,'Pichincha');
+insert into Provincia values(17,2,'Tungurahua');
+insert into Provincia values(18,3,'Morona Santiago');
+insert into Provincia values(19,3,'Napo');
+insert into Provincia values(20,3,'Orellana');
+insert into Provincia values(21,3,'Pastaza');
+insert into Provincia values(22,3,'Sucumbios');
+insert into Provincia values(23,3,'Zamora Chinchipe');
+insert into Provincia values(24,4,'Galápagos');
+
+--Datos de la tabla Ciudad
+insert into Ciudad values(1,2,'Manta');
+insert into Ciudad values(2,2,'Chone');
+insert into Ciudad values(3,2,'Portoviejo');
+insert into Ciudad values(4,5,'Guayaquil');
+insert into Ciudad values(5,16,'Quito');
+insert into Ciudad values(6,7,'Santo Domingo');
+
+--Datos de la tabla Ubicacion_Sucursal
+insert into Ubicacion_Sucursal values(1,4,'CALLE 13E NE','1° Pasaje 1A NE','Entre Tecnomega y Aquatropicalsa. Enfrente de COMPUHELP');
+insert into Ubicacion_Sucursal values(2,1,'Calle 13','Avenida 6-4','Diagonal a la Iglesia La Merced');
+insert into Ubicacion_Sucursal values(3,3,'15 de abril','Cinco de Junio','A lado de Pilma Club');
+insert into Ubicacion_Sucursal values(4,1,'C. P 3','A vei 14','Enfrente del colegio rios de aguas vivas');
+
+--Datos de la tabla Sucursal
+insert into Sucursal values(1,2,'Entérate "Norte"');
+insert into Sucursal values(2,4,'Entérate "Sur"');
+insert into Sucursal values(3,1,'Entérate "GQ"');
+insert into Sucursal values(4,3,'Entérate "Porto"');
+
+--Datos de la tabla Demandas
+insert into Demandas values(1,4,'2022-03-05','Uso de imagen sin consentimiento');
+insert into Demandas values(2,4,'2022-04-10','Uso de imagen sin consentimiento');
+insert into Demandas values(3,1,'2022-04-11','Imagen editada que exagera lo natural');
+insert into Demandas values(4,2,'2022-06-20','Uso de imagen sin consentimiento');
+insert into Demandas values(5,4,'2022-06-21','Falacia en un 20% de la noticia de la primera plana');
+insert into Demandas values(6,4,'2022-08-30','Uso de imagen sin consentimiento');
+insert into Demandas values(7,2,'2022-09-03','Injuria');
+insert into Demandas values(8,3,'2022-09-06','Ataque racial');
+insert into Demandas values(9,4,'2022-09-10','Uso de imagen sin consentimiento');
+insert into Demandas values(10,1,'2022-09-09','Injuria');
+insert into Demandas values(11,2,'2022-09-21','Uso de imagen sin consentimiento');
+insert into Demandas values(12,3,'2022-10-25','Falacia en un 20% de la noticia de la primera plana');
+insert into Demandas values(13,3,'2022-10-30','Injuria');
+insert into Demandas values(14,4,'2022-11-01','Ataque racial');
+insert into Demandas values(15,2,'2022-11-03','Injuria');
+insert into Demandas values(16,3,'2022-11-06','Ataque racial');
+insert into Demandas values(17,4,'2022-11-10','Uso de imagen sin consentimiento');
+insert into Demandas values(18,1,'2022-11-10','Injuria');
+insert into Demandas values(19,2,'2022-11-10','Uso de imagen sin consentimiento');
+insert into Demandas values(20,1,'2022-11-15','Falacia en un 20% de la noticia de la primera plana');
+insert into Demandas values(21,1,'2022-11-20','Injuria');
+insert into Demandas values(22,4,'2022-11-25','Ataque racial');
+
+--Datos de la tabla Relevancia_Articulo
+insert into Relevancia_Articulo values(1,'Inmediata');
+insert into Relevancia_Articulo values(2,'Puede Postergarse');
+
+--Datos de la tabla Relevancia_Articulo
+insert into Polemica_Articulo values(1,'Máxima');
+insert into Polemica_Articulo values(2,'Mínima');
+
+--Datos de la tabla Tipo_Articulo
+insert into Tipo_Articulo values(1,'Deportivo');
+insert into Tipo_Articulo values(2,'Político');
+insert into Tipo_Articulo values(3,'Arte y Cultura');
+insert into Tipo_Articulo values(4,'Clasificados');
+insert into Tipo_Articulo values(5,'Editorial y Opinión');
+
+--Datos de la tabla Seccion
+insert into Seccion values(1,'Deporte','Quinta',5,3);
+insert into Seccion values(2,'Política','Primera',6,2);
+insert into Seccion values(3,'Arte y Cultura','Segunda',4,2);
+insert into Seccion values(4,'Clasificados','Cuarta',2,2);
+insert into Seccion values(5,'Editorial y Opinión','Tercera',1,3);
+
+--Datos de la tabla Periodista
+insert into Periodista values(1,1,'Roberto','Cobeña Cornejo');
+insert into Periodista values(2,1,'Cristopher','Tejena Chávez');
+insert into Periodista values(3,1,'Cristian','Bonilla Moreira');
+insert into Periodista values(4,2,'Giusepy','Calle Santana');
+insert into Periodista values(5,1,'Pep','Guardiola');
+insert into Periodista values(6,1,'Leonel','Messi');
+insert into Periodista values(7,2,'Eden','Hazard');
+insert into Periodista values(8,2,'Karim','Benzema');
+insert into Periodista values(9,3,'Carlo','Ancelotti');
+insert into Periodista values(10,4,'Jordi','Alaba');
+insert into Periodista values(11,3,'Pablo','Torre');
+insert into Periodista values(12,4,'Ferran','Torres');
+
+--Datos de la tabla Editor
+insert into Editor values(1,1,'Michael','Vinces Andrade');
+insert into Editor values(2,1,'Phil','Cobeña');
+insert into Editor values(3,1,'Bernardo','Silva');
+insert into Editor values(4,1,'Kevin','De Bruyne');
+insert into Editor values(5,1,'Riyad','Mahrez');
+insert into Editor values(6,2,'Julián','Alvarez');
+insert into Editor values(7,1,'Erling ','Haaland');
+insert into Editor values(8,3,'Rubén','Díaz');
+insert into Editor values(9,3,'John','Stone');
+insert into Editor values(10,4,'Daniel','Carvajal');
+insert into Editor values(11,4,'Ferland','Mendy');
+insert into Editor values(12,2,'Lucas','Vásquez');
+
+--Datos de la tabla Estado
+insert into Estado values(1,'Aprobado');
+insert into Estado values(2,'Pendiente');
+insert into Estado values(3,'Denegado');
+
+--Datos de la tabla Articulo
+insert into Articulo values(1,1,2,1,1,1,'Nacional Aciende a la A');
+insert into Articulo values(2,1,2,1,2,1,'Nacional entra a Libertadores');
+insert into Articulo values(3,1,2,1,5,1,'Independiente campeon de la Copa Ecuador');
+insert into Articulo values(4,1,2,2,1,3,'Candidatos a la presidencia');
+insert into Articulo values(5,1,2,2,1,3,'Candidatos disputan la presidencia');
+insert into Articulo values(6,1,2,2,1,1,'Candidatos que pelean la candidatura');
+insert into Articulo values(7,2,2,3,1,2,'Esculturas en el estadio de Manta');
+insert into Articulo values(8,2,2,3,2,2,'Delfin ya tiene esculturas');
+insert into Articulo values(9,1,2,4,2,1,'Alcantarillado en Jaramijó');
+insert into Articulo values(10,1,2,3,2,1,'Tarqui brilla de culturalidad');
+insert into Articulo values(11,1,2,3,4,1,'Esculturas en el Estadio Jocay');
+insert into Articulo values(12,1,2,1,1,1,'Aucas el "Campeon del pueblo"');
+insert into Articulo values(13,1,2,2,1,1,'Fin de la candidatura a los alcaldes');
+insert into Articulo values(14,1,2,1,2,3,'Aucas Campeon');
+insert into Articulo values(15,1,1,1,2,3,'Convocados a la seleccion');
+insert into Articulo values(16,1,1,1,1,1,'Los mundialistas que irán a Qatar');
+insert into Articulo values(17,2,1,3,1,1,'Uleam y sus esculturas');
+insert into Articulo values(18,1,1,4,2,3,'Emprendedores y sus inconformidades en tarqui');
+insert into Articulo values(19,1,1,4,2,3,'Los malos rumores habitan en tarqui');
+insert into Articulo values(20,1,1,4,1,1,'Disconformidades en Tarqui');
+
+--Datos de la tabla Revision
+insert into Revision values(1,1,1,'Todo Ok');
+insert into Revision values(2,3,2,'Todo Ok');
+insert into Revision values(3,5,3,'Todo Ok');
+insert into Revision values(4,2,4,'Mejorar Redacción');
+insert into Revision values(5,3,5,'Mejorar Redacción');
+insert into Revision values(6,2,6,'Todo Ok');
+insert into Revision values(7,2,7,'En revision');
+insert into Revision values(8,3,8,'En revision');
+insert into Revision values(9,2,9,'Todo Ok');
+insert into Revision values(10,3,10,'Todo Ok');
+insert into Revision values(11,6,11,'Todo Ok');
+insert into Revision values(12,2,12,'Todo Ok');
+insert into Revision values(13,3,13,'Todo Ok');
+insert into Revision values(14,2,14,'Mejorar Redacción');
+insert into Revision values(15,2,15,'Mejorar Redacción');
+insert into Revision values(16,2,16,'Todo Ok');
+insert into Revision values(17,2,17,'Todo Ok');
+insert into Revision values(18,3,18,'Mejorar Redacción');
+insert into Revision values(19,2,19,'Mejorar Redacción');
+insert into Revision values(20,2,20,'Todo Ok');
+
+--Datos de la tabla Publicacion
+insert into Publicacion values(1,1,1,'2022-11-15');
+insert into Publicacion values(2,2,1,'2022-11-15');
+insert into Publicacion values(3,3,1,'2022-11-15');
+insert into Publicacion values(4,6,2,'2022-11-15');
+insert into Publicacion values(5,9,4,'2022-11-15');
+insert into Publicacion values(6,10,3,'2022-11-15');
+insert into Publicacion values(7,11,3,'2022-11-15');
+insert into Publicacion values(8,12,1,'2022-11-16');
+insert into Publicacion values(9,13,2,'2022-11-16');
+insert into Publicacion values(10,16,1,'2022-11-16');
+insert into Publicacion values(11,17,3,'2022-11-16');
+insert into Publicacion values(12,20,4,'2022-11-16');
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+--CONSULTA 1
+/*Número de artículos presentados, aprobados, negados y pendientes de un periodista*/
+
+Select
+	Periodista.periodista_apellidos as Apellidos,
+	Periodista.periodista_nombre as Nombre,
+	Estado.estado_nombre as Estado,
+	count (Estado.id_estado) as Cantidad
+From Articulo
+	Inner Join Periodista on Periodista.id_periodista=Articulo.id_periodista
+	inner join Estado on Estado.id_estado=Articulo.id_estado
+	Where Periodista.id_periodista=1
+	group by Periodista.periodista_apellidos,Periodista.periodista_nombre,Estado.estado_nombre;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+--CONSULTA 2
+/*Consultar toda la información sobre una publicación en especifico 
+(el tipo, la relevancia, la polémica, la sección, el periodista, el titulo, 
+la fecha de publicación, quien la edito)*/
+
+Select 
+	Periodista.periodista_apellidos as periodista_apellidos,
+	Periodista.periodista_nombre as periodista_nombre,
+	Articulo.titulo as titulo,
+	Tipo_Articulo.tipo_articulo_nombre as tipo,
+	Polemica_Articulo.polemica_nombre as polemica,
+	Relevancia_Articulo.relevancia_nombre as relevancia,
+	Seccion.seccion_nombre as seccion,
+	Revision.id_revision as id_revision,
+	Editor.editor_apellidos as editor_apellidos,
+	Editor.editor_nombre as editor_nombre,
+	Publicacion.fecha_publicacion as fecha
+From Publicacion
+	inner join Articulo on Articulo.id_articulo=Publicacion.id_articulo
+	Inner Join Periodista on Periodista.id_periodista=Articulo.id_periodista
+	Inner Join Tipo_Articulo on Tipo_Articulo.id_tipo_articulo=Articulo.id_tipo_articulo
+	Inner Join Polemica_Articulo on Polemica_Articulo.id_polemica=Articulo.id_polemica
+	Inner Join Relevancia_Articulo on Relevancia_Articulo.id_relevancia=Articulo.id_relevancia
+	Inner Join Seccion on Seccion.id_seccion=Publicacion.id_seccion
+	inner join Revision on Revision.id_articulo=Articulo.id_articulo
+	inner join Editor on Editor.id_editor=Revision.id_editor
+where Publicacion.id_publicacion=2;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+--CONSULTA 3
+/*Cuál es la sucursal con más demandas o quejas y cuantas ha recibido.*/
+
+Select
+	Sucursal.sucursal_nombre as Sucursal,
+	Count(Demandas) as Demandas,
+	Region.region_nombre as Region,
+	Provincia.provincia_nombre as Provincia,
+	Ciudad.ciudad_nombre as Ciudad,
+	Ubicacion_Sucursal.calle as Calle,
+	Ubicacion_Sucursal.avenida as Avenida,
+	Ubicacion_Sucursal.referencia as Referencia
+From Demandas
+	inner join Sucursal on Sucursal.id_sucursal = Demandas.id_sucursal
+	inner join Ubicacion_Sucursal on Ubicacion_Sucursal.id_ubicacion =Sucursal.id_ubicacion
+	inner join Ciudad on Ciudad.id_ciudad=Ubicacion_Sucursal.id_ciudad
+	inner join Provincia on Provincia.id_provincia=Ciudad.id_provincia
+	inner join Region on Region.id_region =Provincia.id_region
+	group by Sucursal.sucursal_nombre,Region.region_nombre,Provincia.provincia_nombre,Ciudad.ciudad_nombre,
+	Ubicacion_Sucursal.calle,Ubicacion_Sucursal.avenida,Ubicacion_Sucursal.referencia
+	order by Demandas desc limit 1;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+--CONSULTA 4
+/*Consultar toda la información acerca de un día en una sucursal seleccionada (periodistas, artículos publicados, editores, revisiones) */
+
+Select 
+	Sucursal.sucursal_nombre as sucursal,
+	Periodista.periodista_apellidos as periodista_apellidos,
+	Periodista.periodista_nombre as periodista_nombre,
+	Articulo.titulo as titulo,
+	Revision.id_revision as id_revision,
+	Editor.editor_apellidos as editor_apellidos,
+	Editor.editor_nombre as editor_nombre,
+	Publicacion.fecha_publicacion as fecha
+from Publicacion
+	inner join Articulo on Articulo.id_articulo=Publicacion.id_articulo
+	Inner Join Periodista on Periodista.id_periodista=Articulo.id_periodista
+	inner join Revision on Revision.id_articulo=Articulo.id_articulo
+	inner join Editor on Editor.id_editor=Revision.id_editor
+	inner join Sucursal on Sucursal.id_sucursal=Editor.id_sucursal
+where Publicacion.fecha_publicacion='2022-11-15' and Sucursal.id_sucursal=1;
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*Trigger que no permita publicar un articulo en una sección 
+donde esta ya alcanzo el máximo de publicaciones por día.*/
+create or replace function tg_publi_max() returns trigger
+as
+$$
+	declare
+	totalpublicacion int;
+	publi_max int;
+begin 
+	select count(*) into totalpublicacion from Publicacion 
+	where id_seccion=new.id_seccion and fecha_publicacion=new.fecha_publicacion;
+	select Seccion.publicaciones_max into publi_max from Seccion where id_seccion=new.id_seccion;
+	if (totalpublicacion>=publi_max) then
+	Raise exception 'Este articulo debe de publicarse otro día. Se alcanzó el máximo de publicaciones 
+	diarias para esta sección';
+	end if;
+	return new;
+end;
+$$
+LANGUAGE plpgsql;
+create trigger tg_publi_max before insert 
+on Publicacion for each row 
+execute procedure tg_publi_max(); 	
+-------Prueba
+begin;
+insert into Articulo values(21,1,2,1,1,1,'Emelec a la Sudamericana');
+insert into Revision values(21,2,21,'Todo Ok');
+insert into Publicacion values(15,21,1,'2022-11-15');
+commit;
+rollback;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*Cursor que muestre el número de publicaciones realizadas por una sucursal pasada como parámetro.*/
+
+do $$
+declare
+	cantidad int=0;
+	registro record;
+	num int;
+	
+	--creacion del cursor
+Sucursal_Publicaciones cursor for select * from Publicacion, Periodista, Articulo, Sucursal, Ubicacion_Sucursal, Ciudad 
+where Articulo.id_articulo=Publicacion.id_articulo and Periodista.id_periodista=Articulo.id_periodista 
+and Sucursal.id_sucursal=Periodista.id_sucursal and Ubicacion_Sucursal.id_ubicacion=Sucursal.id_ubicacion 
+and Ciudad.id_ciudad=Ubicacion_Sucursal.id_ciudad and Sucursal.id_sucursal=1;
+begin
+	for num in Sucursal_Publicaciones
+	loop
+	cantidad=cantidad+count(num.id_publicacion);
+	end loop;
+	open Sucursal_Publicaciones;
+fetch Sucursal_Publicaciones into registro;
+Raise notice 'La Sucursal % de la ciudad de % ha realizado % publicaciones.',registro.sucursal_nombre, registro.ciudad_nombre, cantidad;
+end $$
+language 'plpgsql';
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*Un procedimiento almacenado que devuelva la cantidad de artículos denegados de un periodista 
+que se le pase como parámetro*/
+create or replace function negados_total (apellidos text, nombre text, p_id int) returns bigint
+as
+$$
+select count(Estado.id_estado) from Articulo,Periodista,Estado
+where Articulo.id_periodista = Periodista.id_periodista and Articulo.id_estado=Estado.id_estado 
+and Estado.id_estado=3 and Periodista.periodista_apellidos=apellidos and Periodista.periodista_nombre=nombre 
+and Periodista.id_periodista=p_id
+$$
+language SQL;
+
+-- Prueba 1
+select negados_total('Tejena Chávez','Cristopher',2)
+-- Prueba 2
+select negados_total('Cobeña Cornejo','Roberto',1)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*Reporte en Ireport que muestre el porcentaje de demandas que han recibido todas las sucursales*/
+Select 
+	Sucursal.sucursal_nombre as sucursal,
+	count (Demandas.id_demandas) as demandas
+from Demandas
+	inner join Sucursal on Sucursal.id_sucursal=Demandas.id_sucursal
+	group by Sucursal.sucursal_nombre;
