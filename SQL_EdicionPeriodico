@@ -102,7 +102,7 @@ create table Ciudad(
 	ciudad_nombre text not null,
 	constraint PK_Ciudad primary key (id_ciudad)
 );
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 alter table Provincia
 add constraint FK_Provincia_Region foreign key (id_region)
@@ -183,8 +183,8 @@ alter table Revision
 add constraint FK_Revision_Editor foreign key (id_editor)
 references Editor (id_editor)
 on delete restrict  on update restrict;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Datos de la tabla region
 insert into Region values(1,'Litoral');
 insert into Region values(2,'Sierra');
@@ -373,7 +373,7 @@ insert into Publicacion values(9,13,2,'2022-11-16');
 insert into Publicacion values(10,16,1,'2022-11-16');
 insert into Publicacion values(11,17,3,'2022-11-16');
 insert into Publicacion values(12,20,4,'2022-11-16');
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 --CONSULTA 1
 /*Número de artículos presentados, aprobados, negados y pendientes de un periodista*/
 
@@ -387,7 +387,7 @@ From Articulo
 	inner join Estado on Estado.id_estado=Articulo.id_estado
 	Where Periodista.id_periodista=1
 	group by Periodista.periodista_apellidos,Periodista.periodista_nombre,Estado.estado_nombre;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 --CONSULTA 2
 /*Consultar toda la información sobre una publicación en especifico 
 (el tipo, la relevancia, la polémica, la sección, el periodista, el titulo, 
@@ -415,7 +415,7 @@ From Publicacion
 	inner join Revision on Revision.id_articulo=Articulo.id_articulo
 	inner join Editor on Editor.id_editor=Revision.id_editor
 where Publicacion.id_publicacion=2;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 --CONSULTA 3
 /*Cuál es la sucursal con más demandas o quejas y cuantas ha recibido.*/
 
@@ -437,15 +437,16 @@ From Demandas
 	group by Sucursal.sucursal_nombre,Region.region_nombre,Provincia.provincia_nombre,Ciudad.ciudad_nombre,
 	Ubicacion_Sucursal.calle,Ubicacion_Sucursal.avenida,Ubicacion_Sucursal.referencia
 	order by Demandas desc limit 1;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 --CONSULTA 4
-/*Consultar toda la información acerca de un día en una sucursal seleccionada (periodistas, artículos publicados, editores, revisiones) */
+/*Consultar toda la información acerca de un día en una sucursal seleccionada (periodistas, artículos publicados, seccion, editores, revisiones) */
 
 Select 
 	Sucursal.sucursal_nombre as sucursal,
 	Periodista.periodista_apellidos as periodista_apellidos,
 	Periodista.periodista_nombre as periodista_nombre,
 	Articulo.titulo as titulo,
+	Seccion.seccion_nombre as seccion,
 	Revision.id_revision as id_revision,
 	Editor.editor_apellidos as editor_apellidos,
 	Editor.editor_nombre as editor_nombre,
@@ -453,12 +454,13 @@ Select
 from Publicacion
 	inner join Articulo on Articulo.id_articulo=Publicacion.id_articulo
 	Inner Join Periodista on Periodista.id_periodista=Articulo.id_periodista
+	inner join Seccion on Seccion.id_seccion=Publicacion.id_seccion
 	inner join Revision on Revision.id_articulo=Articulo.id_articulo
 	inner join Editor on Editor.id_editor=Revision.id_editor
 	inner join Sucursal on Sucursal.id_sucursal=Editor.id_sucursal
 where Publicacion.fecha_publicacion='2022-11-15' and Sucursal.id_sucursal=1;
 	
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------	
 /*Trigger que no permita publicar un articulo en una sección 
 donde esta ya alcanzo el máximo de publicaciones por día.*/
 create or replace function tg_publi_max() returns trigger
@@ -482,14 +484,14 @@ LANGUAGE plpgsql;
 create trigger tg_publi_max before insert 
 on Publicacion for each row 
 execute procedure tg_publi_max(); 	
--------Prueba
+
 begin;
-insert into Articulo values(21,1,2,1,1,1,'Emelec a la Sudamericana');
-insert into Revision values(21,2,21,'Todo Ok');
-insert into Publicacion values(15,21,1,'2022-11-15');
+insert into Articulo values(22,1,2,1,1,1,'Emelec a la Sudamericana');
+insert into Revision values(22,2,21,'Todo Ok');
+insert into Publicacion values(15,22,1,'2022-11-16');
 commit;
 rollback;
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 /*Cursor que muestre el número de publicaciones realizadas por una sucursal pasada como parámetro.*/
 
 do $$
@@ -514,7 +516,7 @@ Raise notice 'La Sucursal % de la ciudad de % ha realizado % publicaciones.',reg
 end $$
 language 'plpgsql';
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 /*Un procedimiento almacenado que devuelva la cantidad de artículos denegados de un periodista 
 que se le pase como parámetro*/
 create or replace function negados_total (apellidos text, nombre text, p_id int) returns bigint
@@ -532,7 +534,7 @@ select negados_total('Tejena Chávez','Cristopher',2)
 -- Prueba 2
 select negados_total('Cobeña Cornejo','Roberto',1)
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
 /*Reporte en Ireport que muestre el porcentaje de demandas que han recibido todas las sucursales*/
 Select 
 	Sucursal.sucursal_nombre as sucursal,
